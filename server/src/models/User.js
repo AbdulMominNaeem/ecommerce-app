@@ -37,11 +37,18 @@ const userSchema = new mongoose.Schema(
             type: String,
             enum: ["user", "admin"],
             default: "user",
+        },
+        photo: {
+            type: String,
+            alias: "avatar",
+            default: "",
         }
     
     },
         {
-            timestamps: true
+            timestamps: true,
+            toJSON: { virtuals: true },
+            toObject: { virtuals: true },
         }
 
     

@@ -11,9 +11,11 @@ const getUser = async (req, res) => {
       });
     }
 
+    const userObj = user.toObject({ virtuals: true });
+
     return res.status(200).json({
       message: "User fetch successful",
-      user,
+      user: userObj,
     });
   } catch (error) {
     return res.status(500).json({
@@ -39,9 +41,11 @@ const updateUser = async (req, res) => {
       });
     }
 
+    const userObj = user.toObject({ virtuals: true });
+
     return res.status(200).json({
       message: "User updated successfully",
-      user,
+      user: userObj,
     });
   } catch (error) {
     return res.status(500).json({
@@ -137,5 +141,7 @@ const deleteOneUser = async (req, res) => {
     });
   }
 };
+
+
 
 module.exports = { getUser, updateUser, showAllUser, getAll, deleteOneUser, updateUserByEmail };

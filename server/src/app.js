@@ -1,7 +1,7 @@
 require("dotenv").config();
 
-const path = require("path");
 const express = require('express');
+const path = require("path");
 const app = express();
 const cors = require("cors")
 
@@ -16,7 +16,7 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.get("/", (req, res) => {
     res.json({
         message: "Backend Runing"
