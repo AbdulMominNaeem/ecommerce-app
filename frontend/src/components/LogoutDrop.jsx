@@ -1,6 +1,6 @@
 import { Menu } from '@headlessui/react';
 import { ChevronDown, UserRound } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 export default function LogOutDrop() {
@@ -36,6 +36,9 @@ export default function LogOutDrop() {
 
       <Menu.Items className="absolute right-0 z-10 mt-2 min-w-[12rem] divide-y divide-gray-100 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg focus:outline-none">
         <div className="px-4 py-2 text-sm text-gray-700">{email}</div>
+        <Link to="/profile">
+        <div className="px-4 py-2 text-sm text-gray-700">Profile</div>
+        </Link>
         <div className="py-1">
           <Menu.Item>
             {({ active }) => (
