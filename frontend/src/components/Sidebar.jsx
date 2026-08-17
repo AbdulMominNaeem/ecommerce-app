@@ -8,7 +8,7 @@ export const Sidebar = () => {
             <aside className="w-80 h-screen bg-gray-100 border-r border-gray-300">
                 <div >
 
-                    <Link to='/' className=" lg:block text-cyan-700 hover:text-cyan-900 font-semibold  transition-colors">
+                    <Link to='/' className=" lg:block text-scyan-700 hover:text-cyan-900 font-semibold  transition-colors">
                         <p className="px-10 py-5 flex gap-2 items-center"> <ChevronLeft /> Home</p>
                     </Link>
                 </div>
@@ -25,11 +25,11 @@ export const Sidebar = () => {
                         </button>
                     </Link>
 
-                    <Link to="" className="">
+                    <Link to="/productmg" className="">
                         <button
                             className=" flex cursor-pointer border w-full border-cyan-500 rounded px-4 py-2 text-left hover:bg-cyan-100"
                         >
-                            Option
+                            Product Management
                         </button>
                     </Link>
                     <Link to="" className="">

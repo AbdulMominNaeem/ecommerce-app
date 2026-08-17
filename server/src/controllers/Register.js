@@ -31,7 +31,7 @@ const Register = async (req, res) => {
     const verificationCodeExpires = new Date(
       Date.now() + 10 * 60 * 1000
     );
-
+    
     const user = new User({
       name,
       email,

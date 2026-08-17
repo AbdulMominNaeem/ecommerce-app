@@ -8,6 +8,7 @@ import { PublicRoute } from './components/PublicRoute'
 import { Profile } from './pages/Profile'
 import { Dashboard } from './pages/Dashboard'
 import { UserManagement } from './pages/UserManagement'
+import { Products } from './pages/Products'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path='/UserMg' element={<UserManagement/>}/>
           <Route path="/profile" element={<Profile/>}/>
+          <Route path='/productmg' element={<Products/>} />
         </Routes>
       </BrowserRouter>
     </>

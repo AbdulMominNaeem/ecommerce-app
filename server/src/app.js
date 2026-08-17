@@ -7,6 +7,7 @@ const cors = require("cors")
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 
 app.use(express.json());
@@ -22,5 +23,7 @@ app.get("/", (req, res) => {
         message: "Backend Runing"
     })
 })
+
+app.use("/store", productRoutes);
 
 module.exports = app;
