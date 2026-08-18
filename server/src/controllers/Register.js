@@ -215,7 +215,7 @@ const uploadImg = async (req, res) => {
       });
     }
 
-    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const avatarUrl = req.file ? req.file.path :"";
 
     user.avatar = avatarUrl;
 
