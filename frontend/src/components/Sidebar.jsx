@@ -32,11 +32,11 @@ export const Sidebar = () => {
                             Product Management
                         </button>
                     </Link>
-                    <Link to="" className="">
+                    <Link to="/catmg" className="">
                         <button
                             className="cursor-pointer border w-full border-cyan-500 rounded px-4 py-2 text-left hover:bg-cyan-100"
                         >
-                            Option
+                            Category Management
                         </button>
                     </Link>
                 </div>

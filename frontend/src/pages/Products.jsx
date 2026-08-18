@@ -1,6 +1,5 @@
 import { Pencil, Plus, RotateCw, Trash, } from "lucide-react";
-import { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Sidebar } from "../components/Sidebar";
@@ -32,6 +31,8 @@ export const Products = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
   const [imageLoading, setImageLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [categories, setCategories] = useState([]);
 
 
   const [preview, setPreview] = useState("");
@@ -58,7 +59,7 @@ export const Products = () => {
     setIsEditing(true);
   };
 
-    const startDeleting = (product) => {
+  const startDeleting = (product) => {
     if (!product) return;
 
     setCurrentProduct(product);
@@ -99,11 +100,14 @@ export const Products = () => {
 
   useEffect(() => {
     getAll();
+    getAllCategory();
+
   }, []);
 
 
   const getAll = async () => {
     try {
+
       setLoading(true);
       const response = await fetch("http://localhost:3001/store/all", {
         method: "GET",
@@ -133,42 +137,42 @@ export const Products = () => {
 
   };
 
-const handleDeleteProduct = async (product) => {
-  if (!product?._id) {
-    toast.error("No product selected");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const response = await fetch("http://localhost:3001/store/delete", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        _id: product._id,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      toast.error(data.message || "Failed to delete product");
+  const handleDeleteProduct = async (product) => {
+    if (!product?._id) {
+      toast.error("No product selected");
       return;
     }
 
-    toast.success(data.message || "Product deleted successfully");
+    try {
+      setLoading(true);
 
-    await getAll();
-  } catch (error) {
-    toast.error(error?.message || "Unauthorized");
-  } finally {
-    setLoading(false);
-  }
-};
+      const response = await fetch("http://localhost:3001/store/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          _id: product._id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.message || "Failed to delete product");
+        return;
+      }
+
+      toast.success(data.message || "Product deleted successfully");
+
+      await getAll();
+    } catch (error) {
+      toast.error(error?.message || "Unauthorized");
+    } finally {
+      setLoading(false);
+    }
+  };
   const submitUpdate = async (e) => {
     e && e.preventDefault();
 
@@ -178,12 +182,13 @@ const handleDeleteProduct = async (product) => {
     }
 
 
-    
+
     const formData = new FormData();
     formData.append("_id", currentProduct._id);
     formData.append("title", newData.title || "");
     formData.append("description", newData.description || "");
     formData.append("productImg", newData.photo);
+    formData.append("category", newData.category)
 
 
     if (selectedFile) {
@@ -217,7 +222,7 @@ const handleDeleteProduct = async (product) => {
     } catch (error) {
       setLoading(false);
       toast.error(error?.message || "Error updating product");
-      
+
     }
   };
 
@@ -271,6 +276,43 @@ const handleDeleteProduct = async (product) => {
     }
   };
 
+  const getAllCategory = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        "http://localhost:3001/category/getallp",
+        {
+          method: "GET",
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("API RESPONSE:", data);
+
+      if (!response.ok) {
+        toast.error(data.message || "Failed to fetch categories");
+        return;
+      }
+
+      const fetchedCategories = data?.category || [];
+
+      setCategories(fetchedCategories);
+
+      console.log("Categories:", fetchedCategories);
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch categories");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
 
 
   return (
@@ -300,9 +342,15 @@ const handleDeleteProduct = async (product) => {
                   className="cursor-pointe hover:text-cyan-700 transition-all duration-300 hover:scale-125"
                   onClick={() => {
                     setNewData({
-                      description: "",
-                      title: "",
+                      name: "",
                     });
+                    setPreview("");
+                    setSelectedFile(null);
+
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = "";
+                    }
+
                     setIsCreating(true);
                   }}
                 />
@@ -314,18 +362,17 @@ const handleDeleteProduct = async (product) => {
             <tbody className="mt-10 h-80 divide-y overflow-auto divide-gray-100 border border-gray-100">
 
               {Products.map((product) => (
-                <tr
-                  key={product._id}
-
-                  className="hover:bg-gray-50 transition-colors duration-200 activate:bg-black "
-                >
-                  <td className="mx-6 my-4 font-medium text-gray-900">
-                    <img src={product.photo} />                  
-                    </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">
-                    {product.fil}
+                console.log(product.photo),
+                <tr key={product._id}>
+                  <td className="px-6 py-4 [display:-webkit-inline-box]">
+                    <img
+                      src={product.photo}
+                      alt={product.title || "Product"}
+                      className="h-10 w-10 object-cover rounded"
+                    />
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">
+
+                  <td className="px-6 py-4">
                     {product.title}
                   </td>
 
@@ -333,21 +380,18 @@ const handleDeleteProduct = async (product) => {
                     {product.description}
                   </td>
 
-
                   <td className="px-6 py-4">
-                    <Pencil className="cursor-pointer hover:text-gray-700 hover:fill-cyan-300" onClick={(e) => {
-                      e.stopPropagation();
-                      startEditing(product);
-                    }}>
-
-                      Edit product
-                    </Pencil>
+                    <Pencil
+                      className="cursor-pointer"
+                      onClick={() => startEditing(product)}
+                    />
                   </td>
 
                   <td className="px-6 py-4">
-                    <Trash className="cursor-pointer hover:text-gray-700 hover:fill-red-300" onClick={() => handleDeleteProduct(product)} disabled={!currentProduct}>Delete product</Trash>
-
-
+                    <Trash
+                      className="cursor-pointer"
+                      onClick={() => handleDeleteProduct(product)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -450,6 +494,19 @@ const handleDeleteProduct = async (product) => {
                       }
                     />
                   </div>
+                  <select className="border border-black"
+                    id="category-select"
+                    value={newData.category}
+                    onChange={(e) =>
+                        handleFieldChange("category", e.target.value)
+                      }
+                  >
+                    {categories.map((fetchedCategories) => (
+                      <option key={fetchedCategories._id} value={fetchedCategories._id}>
+                        {fetchedCategories.name}
+                      </option>
+                    ))}
+                  </select>
 
 
 
@@ -556,7 +613,7 @@ const handleDeleteProduct = async (product) => {
                       Cancel
                     </button>
 
-                   <button
+                    <button
                       type="submit"
                       disabled={loading}
                       className="px-4 py-2 bg-cyan-700 text-white rounded"
@@ -573,12 +630,4 @@ const handleDeleteProduct = async (product) => {
 
     </>
   )
-}
-
-function tryParseJSON(input) {
-  try {
-    return JSON.parse(input);
-  } catch (e) {
-    return input;
-  }
 }

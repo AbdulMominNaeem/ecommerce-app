@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
-const bcrypt = require("bcryptjs");
+
+
 
 const getProduct = async (req, res) => {
   try {
@@ -34,6 +35,16 @@ const getAll = async (req, res) => {
     res.status(200).json({ message: "products fetched successfully", products });
   } catch (error) {
     res.status(500).json({ message: error.message });
+
+  }
+};
+const getAllP = async (req, res) => {
+  try {
+    const products = await Product.find().populate("category");
+    res.status(200).json({ message: "products fetched successfully", products });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+
   }
 };
 
@@ -50,25 +61,6 @@ const deleteOneProduct = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!req.user) {
-      return res.status(401).json({ message: "Access denied" });
-    }
-    if (req.user.role !== "admin" && req.user.id !== id) {
-      return res.status(403).json({ message: "You do not have permission to delete this user" });
-    }
-    const deletedUser = await User.findByIdAndDelete(id);
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.json({ message: "User deleted successfully", user: deletedUser });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 const updateProductById = async (req, res) => {
   try {
     const { _id, ...updateData } = req.body;
@@ -78,7 +70,7 @@ const updateProductById = async (req, res) => {
 
     // If a new file is uploaded, multer-storage-cloudinary provides the secure URL in req.file.path
     if (req.file) {
-      updateData.productImg = req.file.path; // Make sure this key matches your schema (was 'photo' or 'productImg')
+      updateData.photo = req.file.path; // Make sure this key matches your schema (was 'photo' or 'productImg')
     }
 
     const product = await Product.findOneAndUpdate(
@@ -114,7 +106,7 @@ const addProduct = async (req, res) => {
     // multer-storage-cloudinary maps the uploaded image directly onto Cloudinary and yields the link inside req.file.path
     if (req.file) {
       imgURL = req.file.path;
-      
+
     }
 
     const product = new Product({
@@ -154,4 +146,4 @@ const updateProduct = async (req, res) => {
   }
 };
 
-module.exports = { showAllProducts, getAll, deleteOneProduct, updateProductById, addProduct, getProduct, updateProduct, deleteUser };
+module.exports = { showAllProducts, getAll, deleteOneProduct, updateProductById, addProduct, getProduct, updateProduct, getAllP };

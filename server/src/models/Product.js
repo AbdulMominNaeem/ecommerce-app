@@ -1,5 +1,6 @@
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
 const productSchema = new mongoose.Schema({
@@ -19,6 +20,11 @@ const productSchema = new mongoose.Schema({
             type: String,
             alias: "productImg",
             default: "",
+    }, 
+    category:{
+        type: Schema.Types.ObjectId,
+        required:false,
+        ref: 'Category'
     }
 
 

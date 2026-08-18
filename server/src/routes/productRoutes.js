@@ -11,6 +11,7 @@ router.get("/",admin, ProductController.getProduct);
 router.post("/", upload.single('file'), ProductController.addProduct);
 router.get("/all", admin, ProductController.getAll);
 router.delete("/delete", admin, ProductController.deleteOneProduct);
+router.get("/getallp", ProductController.getAllP);
 router.put("/updatebyid", admin, upload.single("productImg"), ProductController.updateProductById);
 
 

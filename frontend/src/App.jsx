@@ -9,6 +9,7 @@ import { Profile } from './pages/Profile'
 import { Dashboard } from './pages/Dashboard'
 import { UserManagement } from './pages/UserManagement'
 import { Products } from './pages/Products'
+import { CategoryManagement } from './pages/CategoryManagement'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -27,7 +28,8 @@ function App() {
           <Route path='/UserMg' element={<UserManagement/>}/>
           <Route path="/profile" element={<Profile/>}/>
           <Route path='/productmg' element={<Products/>} />
-        </Routes>
+          <Route path='/catmg' element={<CategoryManagement/>}/>
+         </Routes>
       </BrowserRouter>
     </>
   )

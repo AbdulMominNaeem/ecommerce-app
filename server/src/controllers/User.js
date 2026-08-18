@@ -56,6 +56,7 @@ const updateUser = async (req, res) => {
 
 const updateUserByEmail = async (req, res) => {
   try {
+    console.log(req.body)
     const email = req.body.email;
     const { password, ...updateData } = req.body;
     if (!email) {
@@ -63,9 +64,13 @@ const updateUserByEmail = async (req, res) => {
         message: "email is required to update a user",
       });
     }
+    const photo = req.file ? req.file.path:""
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updateData.password = hashedPassword;
+    }
+    if (photo) {
+      updateData.photo = photo
     }
 
     const user = await User.findOneAndUpdate(
