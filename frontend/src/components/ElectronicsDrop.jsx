@@ -1,35 +1,101 @@
-import { Menu } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Menu } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 const defaultItems = ['Refrigerators', 'Washing machines', 'Laptops', 'Gaming consoles']
 
-export default function ElectronicsDrop({ label = 'Electronics', items = defaultItems, onSelect }) {
+export default function ElectronicsDrop({
+  label = "Electronics",
+  items = defaultItems,
+  onSelect,
+}) {
   return (
-    <Menu as="div" className="relative inline-block">
-      <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+    <Menu as="div" className="relative inline-block text-left">
+
+      {/* Button */}
+      <Menu.Button
+        className="
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-white
+                    px-4
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-slate-800
+                    shadow-sm
+                    transition-all
+                    duration-200
+                    hover:border-cyan-300
+                    hover:bg-cyan-50
+                    hover:text-cyan-700
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-cyan-500/20
+                "
+      >
         {label}
-        <ChevronDownIcon aria-hidden="true" className="-mr-1 h-5 w-5 text-gray-400" />
+
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="h-5 w-5 text-slate-400 transition-transform"
+        />
       </Menu.Button>
 
+      {/* Dropdown */}
       <Menu.Items
-        className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg outline-1 outline-black/5 transition data-[headlessui-state=closed]:scale-95 data-[headlessui-state=closed]:transform data-[headlessui-state=closed]:opacity-0 data-[headlessui-state=open]:duration-100 data-[headlessui-state=open]:ease-out data-[headlessui-state=leave]:duration-75 data-[headlessui-state=leave]:ease-in dark:divide-white/10 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
+        className="
+                    absolute
+                    left-0
+                    z-50
+                    mt-2
+                    w-56
+                    origin-top-left
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-1.5
+                    shadow-[0_15px_40px_rgba(15,23,42,0.12)]
+                    outline-none
+                    focus:outline-none
+                "
       >
-        <div className="py-1">
-          {items.map((item) => (
-            <Menu.Item key={item}>
-              {({ active }) => (
-                <button
-                  type="button"
-                  onClick={() => onSelect?.(item)}
-                  className={`block w-full px-4 py-2 text-left text-sm ${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'} dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white`}
-                >
-                  {item}
-                </button>
-              )}
-            </Menu.Item>
-          ))}
-        </div>
+        {items.map((item) => (
+          <Menu.Item key={item}>
+            {({ active }) => (
+              <button
+                type="button"
+                onClick={() => onSelect?.(item)}
+                className={`
+                                    flex
+                                    w-full
+                                    items-center
+                                    rounded-xl
+                                    px-4
+                                    py-3
+                                    text-left
+                                    text-sm
+                                    font-medium
+                                    transition-all
+                                    duration-150
+                                    ${active
+                    ? "bg-cyan-50 text-cyan-700"
+                    : "text-slate-600 hover:bg-slate-50"
+                  }
+                                `}
+              >
+                {item}
+              </button>
+            )}
+          </Menu.Item>
+        ))}
       </Menu.Items>
     </Menu>
-  )
+  );
 }

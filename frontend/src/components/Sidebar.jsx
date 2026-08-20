@@ -1,46 +1,146 @@
-import { ChevronLeft } from "lucide-react";
+import {
+    ChevronLeft,
+    LayoutDashboard,
+    Package,
+    Tags,
+    Users,
+} from "lucide-react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const Sidebar = () => {
+    const location = useLocation();
+
+    const menuItems = [
+        {
+            name: "User Management",
+            path: "/usermg",
+            icon: Users,
+        },
+        {
+            name: "Product Management",
+            path: "/productmg",
+            icon: Package,
+        },
+        {
+            name: "Category Management",
+            path: "/catmg",
+            icon: Tags,
+        },
+    ];
+
     return (
-        <div className="flex min-h-screen overflow-hidden">
-            <aside className="w-80 h-screen bg-gray-100 border-r border-gray-300">
-                <div >
+        <aside className="flex h-screen w-72 shrink-0 flex-col border-r border-slate-800 bg-slate-950 text-white">
 
-                    <Link to='/' className=" lg:block text-scyan-700 hover:text-cyan-900 font-semibold  transition-colors">
-                        <p className="px-10 py-5 flex gap-2 items-center"> <ChevronLeft /> Home</p>
-                    </Link>
+            {/* Brand */}
+            <div className="border-b border-slate-800 px-6 py-6">
+
+                <Link
+                    to="/"
+                    className="group flex items-center gap-2 text-sm font-medium text-slate-400 transition hover:text-cyan-400"
+                >
+                    <ChevronLeft
+                        size={18}
+                        className="transition-transform duration-200 group-hover:-translate-x-1"
+                    />
+
+                    Back to Store
+                </Link>
+
+                <div className="mt-7">
+                    <h1 className="text-2xl font-black tracking-tight">
+                        Mega<span className="text-cyan-400">Mart</span>
+                    </h1>
+
+                    <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                        Admin Dashboard
+                    </p>
                 </div>
-                <h1 className="p-6 text-2xl font-bold text-cyan-900 text-center">
-                    SideBar
-                </h1>
 
-                <div className="flex flex-col gap-3 px-6 pt-30">
-                    <Link to="/usermg" className="">
-                        <button
-                            className="cursor-pointer border w-full border-cyan-500 rounded px-4 py-2 text-left hover:bg-cyan-100"
-                        >
-                            User Management
-                        </button>
-                    </Link>
+            </div>
 
-                    <Link to="/productmg" className="">
-                        <button
-                            className=" flex cursor-pointer border w-full border-cyan-500 rounded px-4 py-2 text-left hover:bg-cyan-100"
-                        >
-                            Product Management
-                        </button>
-                    </Link>
-                    <Link to="/catmg" className="">
-                        <button
-                            className="cursor-pointer border w-full border-cyan-500 rounded px-4 py-2 text-left hover:bg-cyan-100"
-                        >
-                            Category Management
-                        </button>
-                    </Link>
+            {/* Navigation */}
+            <nav className="flex-1 px-4 py-8">
+
+                <p className="mb-4 px-3 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                    Management
+                </p>
+
+                <div className="space-y-2">
+
+                    {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        const active = location.pathname === item.path;
+
+                        return (
+                            <Link
+                                key={item.path}
+                                to={item.path}
+                                className={`
+                                    group
+                                    flex
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    transition-all
+                                    duration-200
+                                    ${
+                                        active
+                                            ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/10"
+                                            : "text-slate-400 hover:bg-slate-900 hover:text-white"
+                                    }
+                                `}
+                            >
+                                <Icon
+                                    size={19}
+                                    className={`
+                                        transition-colors
+                                        ${
+                                            active
+                                                ? "text-slate-950"
+                                                : "text-slate-500 group-hover:text-cyan-400"
+                                        }
+                                    `}
+                                />
+
+                                <span>{item.name}</span>
+                            </Link>
+                        );
+                    })}
+
                 </div>
-            </aside>
-        </div>
+
+            </nav>
+
+            {/* Bottom */}
+            <div className="border-t border-slate-800 p-4">
+
+                <div className="rounded-xl bg-slate-900 p-4">
+                    <div className="flex items-center gap-3">
+
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-500 text-sm font-bold text-slate-950">
+                            A
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-semibold text-white">
+                                Administrator
+                            </p>
+
+                            <p className="text-xs text-slate-500">
+                                Manage your store
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </aside>
     );
 };

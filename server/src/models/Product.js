@@ -16,6 +16,11 @@ const productSchema = new mongoose.Schema({
         default:""
 
     },
+    price:{
+        type: Number,
+        required:true,
+
+    },
     photo: {
             type: String,
             alias: "productImg",
@@ -23,7 +28,7 @@ const productSchema = new mongoose.Schema({
     }, 
     category:{
         type: Schema.Types.ObjectId,
-        required:false,
+        required:true,
         ref: 'Category'
     }
 

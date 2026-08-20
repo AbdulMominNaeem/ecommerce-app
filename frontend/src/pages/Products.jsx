@@ -188,6 +188,7 @@ export const Products = () => {
     formData.append("title", newData.title || "");
     formData.append("description", newData.description || "");
     formData.append("productImg", newData.photo);
+    formData.append("price", newData.price);
     formData.append("category", newData.category)
 
 
@@ -242,6 +243,9 @@ export const Products = () => {
       formData.append("file", selectedFile);
       formData.append("title", newData.title || "");
       formData.append("description", newData.description || "");
+      formData.append("price", newData.price || "");
+      formData.append("category", newData.category || "");
+
 
       const response = await fetch(
         "http://localhost:3001/store/",
@@ -316,318 +320,595 @@ export const Products = () => {
 
 
   return (
-    <>
-      <div className="flex flex-row">
-        <Sidebar />
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      <Sidebar />
 
+      <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        {/* Header */}
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-cyan-700">
+              Administration
+            </p>
 
-        <div className="h-screen w-screen flex justify-center items-center">
-          <div className="h-200 w-150  flex flex-col justify-center items-center gap-3">
-            <div className="flex gap-20 justify-center items-center">
-              <div>
-                <h1 className="text-xl text-black my-8 py-3 border-b-4 border-cyan-700">
-                  Admin Dashboard
-                </h1>
-              </div>
+            <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-gray-900">
+              Product Management
+            </h1>
 
-              <div className="flex gap-6 justify-center items-center ">
-                <RotateCw
-                  size={24}
-                  className=" hover:border-cyan-500 cursor-pointer hover:text-cyan-700 transition-transform duration-700 hover:rotate-180"
-                  onClick={getAll}
-                />
+            <p className="mt-1 text-sm text-gray-500">
+              Manage your store products, prices and categories.
+            </p>
+          </div>
 
-                <Plus
-                  size={28}
-                  className="cursor-pointe hover:text-cyan-700 transition-all duration-300 hover:scale-125"
-                  onClick={() => {
-                    setNewData({
-                      name: "",
-                    });
-                    setPreview("");
-                    setSelectedFile(null);
+          <div className="flex items-center gap-3">
+            {/* Refresh */}
+            <button
+              type="button"
+              onClick={getAll}
+              disabled={loading}
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 disabled:opacity-50"
+            >
+              <RotateCw
+                size={18}
+                className={loading ? "animate-spin" : ""}
+              />
+            </button>
 
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = "";
-                    }
+            {/* Add Product */}
+            <button
+              type="button"
+              onClick={() => {
+                setNewData({
+                  title: "",
+                  description: "",
+                  price: "",
+                  category: categories[0]?._id || "",
+                });
 
-                    setIsCreating(true);
-                  }}
-                />
-              </div>
-            </div>
+                setPreview("");
+                setSelectedFile(null);
 
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = "";
+                }
 
-
-            <tbody className="mt-10 h-80 divide-y overflow-auto divide-gray-100 border border-gray-100">
-
-              {Products.map((product) => (
-                console.log(product.photo),
-                <tr key={product._id}>
-                  <td className="px-6 py-4 [display:-webkit-inline-box]">
-                    <img
-                      src={product.photo}
-                      alt={product.title || "Product"}
-                      className="h-10 w-10 object-cover rounded"
-                    />
-                  </td>
-
-                  <td className="px-6 py-4">
-                    {product.title}
-                  </td>
-
-                  <td className="px-6 py-4">
-                    {product.description}
-                  </td>
-
-                  <td className="px-6 py-4">
-                    <Pencil
-                      className="cursor-pointer"
-                      onClick={() => startEditing(product)}
-                    />
-                  </td>
-
-                  <td className="px-6 py-4">
-                    <Trash
-                      className="cursor-pointer"
-                      onClick={() => handleDeleteProduct(product)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-
-
-
-
-
-            {/* {isEditing && newData && (
-              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <form onSubmit={submitUpdate} className="bg-white p-6 rounded-lg w-11/12 max-w-lg">
-                  <h2 className="text-xl font-semibold mb-4">Edit Product</h2>
-                  {Object.entries(newData).map(([key, value]) => {
-                    if (key === '_id') return null;
-                    const fieldValue = value ?? '';
-                    return (
-                      <div className="mb-3" key={key}>
-                        <label className="block text-sm font-medium mb-1 text-cyan-400">{key}</label>
-                        {typeof fieldValue === 'object' && fieldValue !== null ? (
-                          <textarea className="border p-2 w-full" value={JSON.stringify(fieldValue)} onChange={(e) => handleFieldChange(key, tryParseJSON(e.target.value))} rows={3} />
-                        ) : (
-                          <input className="border p-2 w-full" value={fieldValue} onChange={(e) => handleFieldChange(key, e.target.value)} />
-                        )}
-                      </div>
-                    )
-                  })}
-                  <div className="flex justify-end gap-2 mt-4">
-                    <button type="button" className="px-4 py-2 border rounded" onClick={resetEditing}>Cancel</button>
-                    <button type="submit" className="px-4 py-2 bg-cyan-700 text-white rounded">Save</button>
-                  </div>
-                </form>
-              </div>
-            )} */}
-            {isEditing && (
-              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <form
-                  onSubmit={submitUpdate}
-                  className="bg-white p-6 rounded-lg w-11/12 max-w-lg"
-                >
-                  <div className="flex flex-col items-center">
-                    {preview ? (
-                      <img
-                        src={preview}
-                        alt="Profile preview"
-                        onClick={handleImageClick}
-                        className="w-40 h-40 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                      />
-                    ) : (
-                      <div
-                        onClick={handleImageClick}
-                        className="w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-300 transition-colors font-semibold"
-                      >
-                        Upload Img
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      accept="image/*"
-                      onChange={(e) => {
-                        handleImageChange(e);
-                        setSelectedFile(e.target.files?.[0] || null)
-                      }}
-
-                      disabled={imageLoading}
-                      className="hidden"
-                    />
-                  </div>
-                  <h2 className="text-xl font-semibold mb-4">
-                    Update Product
-                  </h2>
-
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1 text-cyan-400">
-                      Title
-                    </label>
-
-                    <input
-                      type="text"
-                      className="border p-2 w-full"
-                      value={newData.title || ""}
-                      onChange={(e) =>
-                        handleFieldChange("title", e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1 text-cyan-400">
-                      Description
-                    </label>
-
-                    <textarea
-                      className="border p-2 w-full"
-                      value={newData.description || ""}
-                      onChange={(e) =>
-                        handleFieldChange("description", e.target.value)
-                      }
-                    />
-                  </div>
-                  <select className="border border-black"
-                    id="category-select"
-                    value={newData.category}
-                    onChange={(e) =>
-                        handleFieldChange("category", e.target.value)
-                      }
-                  >
-                    {categories.map((fetchedCategories) => (
-                      <option key={fetchedCategories._id} value={fetchedCategories._id}>
-                        {fetchedCategories.name}
-                      </option>
-                    ))}
-                  </select>
-
-
-
-                  <div className="flex justify-end gap-2 mt-4">
-                    <button
-                      type="button"
-                      className="px-4 py-2 border rounded"
-                      onClick={resetEditing}
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="px-4 py-2 bg-cyan-700 text-white rounded"
-                    >
-                      {loading ? "Saving..." : "Save"}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {isCreating && (
-              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <form
-                  onSubmit={handleCreateProduct}
-                  className="bg-white p-6 rounded-lg w-11/12 max-w-lg"
-                >
-                  <h2 className="text-xl font-semibold mb-4">
-                    Create Product
-                  </h2>
-
-                  <div className="mb-3">
-                    <div className="flex flex-col items-center">
-                      {preview ? (
-                        <img
-                          src={preview}
-                          alt="Profile preview"
-                          onClick={handleImageClick}
-                          className="w-40 h-40 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                        />
-                      ) : (
-                        <div
-                          onClick={handleImageClick}
-                          className="w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer hover:bg-gray-300 transition-colors font-semibold"
-                        >
-                          Upload Img
-                        </div>
-                      )}
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        accept="image/*"
-                        onChange={(e) => {
-                          handleImageChange(e);
-                          setSelectedFile(e.target.files?.[0] || null)
-                        }}
-
-                        disabled={imageLoading}
-                        className="hidden"
-                      />
-                    </div>
-                    <label className="block text-sm font-medium mb-1 text-cyan-400">
-                      Title
-                    </label>
-
-                    <input
-                      type="text"
-                      className="border p-2 w-full"
-                      value={newData.title || ""}
-                      onChange={(e) =>
-                        handleFieldChange("title", e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1 text-cyan-400">
-                      Description
-                    </label>
-
-                    <textarea
-                      className="border p-2 w-full"
-                      value={newData.description || ""}
-                      onChange={(e) =>
-                        handleFieldChange("description", e.target.value)
-                      }
-                    />
-                  </div>
-
-
-                  <div className="flex justify-end gap-2 mt-4">
-                    <button
-                      type="button"
-                      className="px-4 py-2 border rounded"
-                      onClick={() => {
-                        setIsCreating(false);
-                        setNewData({});
-                        setSelectedFile(null);
-                      }}
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="px-4 py-2 bg-cyan-700 text-white rounded"
-                    >
-                      {loading ? "Saving..." : "Save"}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
+                setIsCreating(true);
+              }}
+              className="flex items-center gap-2 rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-800 active:scale-95"
+            >
+              <Plus size={19} />
+              Add Product
+            </button>
           </div>
         </div>
-      </div >
 
-    </>
-  )
+        {/* Stats */}
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-gray-500">Total Products</p>
+            <p className="mt-2 text-2xl font-bold text-gray-900">
+              {Products.length}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-gray-500">Categories</p>
+            <p className="mt-2 text-2xl font-bold text-gray-900">
+              {categories.length}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-gray-500">Status</p>
+            <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-green-600">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              Store Active
+            </p>
+          </div>
+        </div>
+
+        {/* Product Table */}
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="border-b border-gray-200 px-5 py-4">
+            <h2 className="font-semibold text-gray-900">
+              All Products
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              View and manage your products.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px]">
+              <thead className="bg-gray-50">
+                <tr className="border-b border-gray-200">
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Product
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Description
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Price
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Category
+                  </th>
+
+                  <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-6 py-12 text-center text-sm text-gray-500"
+                    >
+                      <div className="flex flex-col items-center gap-3">
+                        <RotateCw
+                          size={25}
+                          className="animate-spin text-cyan-700"
+                        />
+                        Loading products...
+                      </div>
+                    </td>
+                  </tr>
+                ) : Products.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-6 py-12 text-center text-gray-500"
+                    >
+                      No products found.
+                    </td>
+                  </tr>
+                ) : (
+                  Products.map((product) => (
+                    <tr
+                      key={product._id}
+                      className="transition hover:bg-gray-50"
+                    >
+                      {/* Product */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                            <img
+                              src={formatAvatarUrl(product.photo)}
+                              alt={product.title || "Product"}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="font-semibold text-gray-900">
+                              {product.title}
+                            </p>
+
+                            <p className="mt-1 text-xs text-gray-400">
+                              ID: {product._id}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Description */}
+                      <td className="max-w-xs px-6 py-4">
+                        <p className="line-clamp-2 text-sm text-gray-600">
+                          {product.description || "No description"}
+                        </p>
+                      </td>
+
+                      {/* Price */}
+                      <td className="px-6 py-4">
+                        <span className="font-semibold text-gray-900">
+                          ${product.price}
+                        </span>
+                      </td>
+
+                      {/* Category */}
+                      <td className="px-6 py-4">
+                        <span className="inline-flex rounded-full bg-cyan-50 px-3 py-1 text-xs font-medium text-cyan-700">
+                          {product?.category?.name || "Uncategorized"}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => startEditing(product)}
+                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700"
+                            title="Edit product"
+                          >
+                            <Pencil size={17} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProduct(product)}
+                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                            title="Delete product"
+                          >
+                            <Trash size={17} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* ================= EDIT MODAL ================= */}
+        {isEditing && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <form
+              onSubmit={submitUpdate}
+              className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl"
+            >
+              {/* Modal Header */}
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Edit Product
+                  </h2>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Update product information.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={resetEditing}
+                  className="rounded-lg px-3 py-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Image */}
+              <div className="mb-6 flex flex-col items-center">
+                <div
+                  onClick={handleImageClick}
+                  className="group relative h-32 w-32 cursor-pointer overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50"
+                >
+                  {preview ? (
+                    <img
+                      src={preview}
+                      alt="Product preview"
+                      className="h-full w-full object-cover transition group-hover:opacity-70"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-sm font-medium text-gray-400">
+                      Upload
+                    </div>
+                  )}
+
+                  <div className="absolute inset-0 hidden items-center justify-center bg-black/30 text-sm font-semibold text-white group-hover:flex">
+                    Change
+                  </div>
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={imageLoading}
+                  className="hidden"
+                />
+
+                <p className="mt-2 text-xs text-gray-400">
+                  Click image to change
+                </p>
+              </div>
+
+              {/* Title */}
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Product Title
+                </label>
+
+                <input
+                  type="text"
+                  value={newData.title || ""}
+                  onChange={(e) =>
+                    handleFieldChange("title", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                  placeholder="Enter product title"
+                />
+              </div>
+
+              {/* Description */}
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Description
+                </label>
+
+                <textarea
+                  rows="4"
+                  value={newData.description || ""}
+                  onChange={(e) =>
+                    handleFieldChange("description", e.target.value)
+                  }
+                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                  placeholder="Enter product description"
+                />
+              </div>
+
+              {/* Price */}
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Price
+                </label>
+
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                    $
+                  </span>
+
+                  <input
+                    type="number"
+                    value={newData.price || ""}
+                    onChange={(e) =>
+                      handleFieldChange("price", e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-8 pr-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="mb-6">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Category
+                </label>
+
+                <select
+                  value={
+                    newData.category?._id ||
+                    newData.category ||
+                    ""
+                  }
+                  onChange={(e) =>
+                    handleFieldChange("category", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                >
+                  <option value="">Select category</option>
+
+                  {categories.map((category) => (
+                    <option
+                      key={category._id}
+                      value={category._id}
+                    >
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3 border-t border-gray-100 pt-5">
+                <button
+                  type="button"
+                  onClick={resetEditing}
+                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ================= CREATE MODAL ================= */}
+        {isCreating && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <form
+              onSubmit={handleCreateProduct}
+              className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl"
+            >
+              {/* Header */}
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Add Product
+                  </h2>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Create a new product for your store.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCreating(false);
+                    setNewData({});
+                    setSelectedFile(null);
+                    setPreview("");
+                  }}
+                  className="rounded-lg px-3 py-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Image */}
+              <div className="mb-6 flex flex-col items-center">
+                <div
+                  onClick={handleImageClick}
+                  className="group relative h-32 w-32 cursor-pointer overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50"
+                >
+                  {preview ? (
+                    <img
+                      src={preview}
+                      alt="Product preview"
+                      className="h-full w-full object-cover group-hover:opacity-70"
+                    />
+                  ) : (
+                    <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-400">
+                      <Plus size={25} />
+                      <span className="text-xs font-medium">
+                        Upload Image
+                      </span>
+                    </div>
+                  )}
+
+                  {preview && (
+                    <div className="absolute inset-0 hidden items-center justify-center bg-black/30 text-sm font-semibold text-white group-hover:flex">
+                      Change
+                    </div>
+                  )}
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={imageLoading}
+                  className="hidden"
+                />
+
+                <p className="mt-2 text-xs text-gray-400">
+                  JPG, PNG or WEBP
+                </p>
+              </div>
+
+              {/* Title */}
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Product Title
+                </label>
+
+                <input
+                  type="text"
+                  value={newData.title || ""}
+                  onChange={(e) =>
+                    handleFieldChange("title", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                  placeholder="Enter product title"
+                />
+              </div>
+
+              {/* Description */}
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Description
+                </label>
+
+                <textarea
+                  rows="4"
+                  value={newData.description || ""}
+                  onChange={(e) =>
+                    handleFieldChange("description", e.target.value)
+                  }
+                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                  placeholder="Enter product description"
+                />
+              </div>
+
+              {/* Price */}
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Price
+                </label>
+
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                    $
+                  </span>
+
+                  <input
+                    type="number"
+                    value={newData.price || ""}
+                    onChange={(e) =>
+                      handleFieldChange("price", e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 py-2.5 pl-8 pr-3 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="mb-6">
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Category
+                </label>
+
+                <select
+                  value={newData.category || ""}
+                  onChange={(e) =>
+                    handleFieldChange("category", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+                >
+                  <option value="">Select category</option>
+
+                  {categories.map((category) => (
+                    <option
+                      key={category._id}
+                      value={category._id}
+                    >
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3 border-t border-gray-100 pt-5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCreating(false);
+                    setNewData({});
+                    setSelectedFile(null);
+                    setPreview("");
+                  }}
+                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 rounded-lg bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 disabled:opacity-50"
+                >
+                  {loading ? "Creating..." : "Create Product"}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }

@@ -1,59 +1,164 @@
-import React, { useEffect, useState } from 'react';
-import { Menu } from '@headlessui/react';
-import { ChevronDown, UserRound } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { Menu } from "@headlessui/react";
+import {
+    ChevronDown,
+    LayoutDashboard,
+    ShieldCheck,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function DashDrop({ user }) {
-  const navigate = useNavigate();
-  const [userData, setUserData] = useState(() => {
-    try {
-      const stored = localStorage.getItem('user');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  useEffect(() => {
-    if (!userData) {
-      const stored = localStorage.getItem('user');
-      if (stored) {
+    const [userData] = useState(() => {
         try {
-          setUserData(JSON.parse(stored));
+            const stored = localStorage.getItem("user");
+            return stored ? JSON.parse(stored) : null;
         } catch (error) {
-          console.error('Failed to parse user from localStorage', error);
+            console.error("Failed to parse user:", error);
+            return null;
         }
-      }
-    }
-  }, [userData]);
+    });
 
-  const currentUser = user || userData || {};
+    const currentUser = user || userData || {};
 
-  return (
-    <Menu as="div" className="relative inline-block text-left">
-      <Menu.Button className="inline-flex items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-cyan-700 ring-1 ring-cyan-200 hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-300">
-        <UserRound className='size-5 sm:size-6 text-cyan-700' />
-        <span>{currentUser?.role || 'Profile'}</span>
-        <ChevronDown className='h-4 w-4 text-cyan-700' />
-      </Menu.Button>
+    return (
+        <Menu as="div" className="relative">
 
-      <Menu.Items className="absolute right-0 z-10 mt-2 min-w-[12rem] divide-y divide-gray-100 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg focus:outline-none">
-        <div className="px-4 py-2 text-sm text-gray-700">{currentUser?.role === 'admin' ? 'Admin Access' : 'User'}</div>
-        <div className="py-1">
-          <Menu.Item>
-            {({ active }) => (
-              <Link to="/dashboard" className=" px-4 py-2 text-sm  lg:block text-cyan-700 hover:text-cyan-900 font-semibold underline decoration-2 underline-offset-5 transition-colors">
-          <div className='flex items-center gap-1 sm:gap-2'>
-          <p className="text-cyan-600 text-xs sm:text-sm text-center hover:text-cyan-900 font-semibold underline decoration-2 underline-offset-5 transition-colors">
-              Dashboard
-          </p>
-          </div>
-          </Link>
-            )}
-          </Menu.Item>
-        </div>
-      </Menu.Items>
-    </Menu>
-  );
+            {/* Button */}
+            <Menu.Button
+                className="
+                    group
+                    inline-flex
+                    items-center
+                    gap-2
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-white
+                    px-3
+                    py-2
+                    text-sm
+                    font-semibold
+                    text-slate-700
+                    shadow-sm
+                    transition-all
+                    duration-200
+                    hover:border-cyan-300
+                    hover:bg-cyan-50
+                    hover:text-cyan-700
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-cyan-500/20
+                    sm:px-4
+                "
+            >
+                {/* Admin Icon */}
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-50 text-cyan-600">
+                    <ShieldCheck size={17} />
+                </span>
+
+                {/* Role */}
+                <span className="hidden sm:block">
+                    {currentUser?.role === "admin"
+                        ? "Admin"
+                        : "Account"}
+                </span>
+
+                <ChevronDown
+                    size={16}
+                    className="
+                        text-slate-400
+                        transition-transform
+                        duration-200
+                        group-data-[headlessui-state=open]:rotate-180
+                    "
+                />
+            </Menu.Button>
+
+            {/* Dropdown */}
+            <Menu.Items
+                className="
+                    absolute
+                    right-0
+                    z-50
+                    mt-2
+                    w-60
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    shadow-[0_20px_50px_rgba(15,23,42,0.15)]
+                    focus:outline-none
+                "
+            >
+
+                {/* Header */}
+                <div className="border-b border-slate-100 bg-slate-50 px-4 py-4">
+
+                    <div className="flex items-center gap-3">
+
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-100 text-cyan-600">
+                            <ShieldCheck size={21} />
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-bold text-slate-900">
+                                {currentUser?.role === "admin"
+                                    ? "Administrator"
+                                    : "User Account"}
+                            </p>
+
+                            <p className="text-xs text-slate-500">
+                                {currentUser?.role === "admin"
+                                    ? "Full dashboard access"
+                                    : "Standard account"}
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* Menu */}
+                <div className="p-1.5">
+
+                    <Menu.Item>
+                        {({ active }) => (
+                            <Link
+                                to="/dashboard"
+                                className={`
+                                    flex
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    transition-colors
+                                    ${
+                                        active
+                                            ? "bg-cyan-50 text-cyan-700"
+                                            : "text-slate-600"
+                                    }
+                                `}
+                            >
+                                <LayoutDashboard size={18} />
+
+                                <div>
+                                    <p>Dashboard</p>
+
+                                    <p className="mt-0.5 text-xs font-normal text-slate-400">
+                                        Manage your store
+                                    </p>
+                                </div>
+                            </Link>
+                        )}
+                    </Menu.Item>
+
+                </div>
+
+            </Menu.Items>
+        </Menu>
+    );
 }

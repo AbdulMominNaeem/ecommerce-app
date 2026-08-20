@@ -38,6 +38,77 @@ const getAll = async (req, res) => {
 
   }
 };
+const getAllProduct = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 1000;
+
+        const skip = (page - 1) * limit;
+
+        const [products, totalItems] = await Promise.all([
+            Product.find()
+                .skip(skip)
+                .limit(limit),
+            Product.countDocuments()
+        ]);
+
+        const totalPages = Math.ceil(totalItems / limit);
+
+        res.status(200).json({
+            success: true,
+            message: "Products fetched successfully",
+            meta: {
+                totalItems,
+                totalPages,
+                currentPage: page,
+                itemsPerPage: limit,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+            },
+            products
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+const getAllProductHome = async (req, res) => {
+  try {
+    const {page,limit} = req.query;
+        // 2. Calculate the number of items to skip (offset)
+        const skip = (page - 1) * limit;
+
+        // 3. Fetch the paginated data and total count simultaneously
+        const [products, totalItems] = await Promise.all([
+            Product.find().skip(skip).limit(limit),
+            Product.countDocuments()
+        ]);
+
+        // 4. Calculate total number of pages
+        const totalPages = Math.ceil(totalItems / limit);
+
+        // 5. Send structured response back to client
+        res.json({
+            success: true,
+            meta: {
+                totalItems,
+                totalPages,
+                currentPage: page,
+                itemsPerPage: limit,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+            },
+            data: products
+        });
+    res.status(200).json({ message: "products fetched successfully", products });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+
+  }
+};
 const getAllP = async (req, res) => {
   try {
     const products = await Product.find().populate("category");
@@ -88,11 +159,30 @@ const updateProductById = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "id is required to get a product" });
+    }
+
+    const product = await Product.findOne({ _id:id }).populate('category');
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    return res.status(200).json({ message: "Product fetch successfully", product });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 const addProduct = async (req, res) => {
   try {
-    const { title, description } = req.body;
-
-    if (!title || !description) {
+  
+    const { title, description, price, category } = req.body;
+    console.log(typeof(price),price)
+    if (!title || !description || !price || !category) {
       return res.status(400).json({ message: "Please provide title, description and product image." });
     }
 
@@ -112,6 +202,8 @@ const addProduct = async (req, res) => {
     const product = new Product({
       title,
       description,
+      price: Number(price),
+      category,
       productImg: imgURL,
     });
 
@@ -146,4 +238,4 @@ const updateProduct = async (req, res) => {
   }
 };
 
-module.exports = { showAllProducts, getAll, deleteOneProduct, updateProductById, addProduct, getProduct, updateProduct, getAllP };
+module.exports = { showAllProducts, getAll, deleteOneProduct, updateProductById, addProduct, getProduct, updateProduct, getAllP,getProductById,getAllProduct, getAllProductHome };

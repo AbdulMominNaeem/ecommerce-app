@@ -10,6 +10,8 @@ import { Dashboard } from './pages/Dashboard'
 import { UserManagement } from './pages/UserManagement'
 import { Products } from './pages/Products'
 import { CategoryManagement } from './pages/CategoryManagement'
+import { ProductDetail } from './pages/ProductDetail'
+import { AllProductPage } from './pages/AllProductPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,6 +31,8 @@ function App() {
           <Route path="/profile" element={<Profile/>}/>
           <Route path='/productmg' element={<Products/>} />
           <Route path='/catmg' element={<CategoryManagement/>}/>
+          <Route path="/productdetail/:id" element={<ProductDetail />} />
+          <Route path='/products' element={<AllProductPage/>} />
          </Routes>
       </BrowserRouter>
     </>
